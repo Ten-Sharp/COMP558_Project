@@ -1,6 +1,8 @@
-function [recoverable_region,masked_I] = mask_estimate(I,blocksize,threshold,ratio_range,frequencies)
+function [recoverable_region,masked_I,mask_map] = mask_estimate(I,blocksize,threshold,ratio_range,frequencies)
 %MASK_ESTIMATE Summary of this function goes here
 %   Detailed explanation goes here
+% mask_map = ones(size(I,1),size(I,2));
+
 horizontal_blocks = floor(size(I,2)/blocksize);
 vertical_blocks = floor(size(I,1)/blocksize);
 
@@ -33,6 +35,13 @@ for x = 1:horizontal_blocks
     end
 end
 
+for i = 1:size(recoverable_region,1)
+    for j = 1:size(recoverable_region,2)
+        mask_map((i-1)*blocksize+1:i*blocksize,(j-1)*blocksize+1:j*blocksize) = recoverable_region(i,j);
+    end
+end
+
+disp(size(mask_map))
 
 end
 

@@ -60,9 +60,15 @@ for x = 1:horizontal_blocks
         end
 
         orientations(x,y) = orientation;
-        ori_map((y-1)*blocksize+1:y*blocksize,(x-1)*blocksize+1:x*blocksize) = orientation;
     end
 end
+
+for i = 1:size(orientations,1)
+    for j = 1:size(orientations,2)
+        ori_map((i-1)*blocksize+1:i*blocksize,(j-1)*blocksize+1:j*blocksize) = orientations(i,j);
+    end
+end
+
 
 end
 

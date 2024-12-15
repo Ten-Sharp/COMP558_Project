@@ -1,2 +1,3 @@
 minutiae-extraction/__pycache__
 *.tif
+*.mat

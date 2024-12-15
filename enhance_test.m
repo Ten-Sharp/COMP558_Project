@@ -21,12 +21,14 @@ function enhance_test(fileName1, fileName2)
             Im = rgb2gray(Im);
         end
     
-        Im_enhanced = fingerprint_enhancer(Im,128,150,16,6,0.9,0.5,0.5);
+        [Im_enhanced,ori_map,freq_map,mask_map] = fingerprint_enhancer(Im,128,150,16,6,0.9,0.5,0.5);
     
         [~, name, ext] = fileparts(fileNames{i});
         newFileName = fullfile(strcat(name, '_enhanced', ext));
     
         imwrite(Im_enhanced, newFileName);
+
+        save(strcat(name, '_enhanced_maps.mat'), 'ori_map','freq_map','mask_map');
     end
     
     

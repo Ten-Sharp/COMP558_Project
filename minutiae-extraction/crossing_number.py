@@ -3,6 +3,7 @@ import utils
 import argparse
 import math
 import os
+import numpy as np
 
 cells = [(-1, -1), (-1, 0), (-1, 1), (0, 1), (1, 1), (1, 0), (1, -1), (0, -1), (-1, -1)]
 
@@ -21,7 +22,7 @@ def minutiae_at(pixels, i, j):
             return "bifurcation"
     return "none"
 
-def calculate_minutiaes(im):
+def calculate_minutiaes(im,mask):
     pixels = utils.load_image(im)
     utils.apply_to_each_pixel(pixels, lambda x: 0.0 if x > 10 else 1.0)
 
@@ -38,18 +39,44 @@ def calculate_minutiaes(im):
     marginy = 145
 
     minutiae_coords = []
-    for i in range(marginxr, x- marginxl):
-        for j in range(marginy, y - marginy):
-            minutiae = minutiae_at(pixels, i, j)
-            if minutiae != "none":
-                # Optionally, you can also impose other criteria here 
-                # to ensure it's truly a fingerprint-related minutia
-                draw.ellipse(
-                    [(i - ellipse_size, j - ellipse_size),
-                     (i + ellipse_size, j + ellipse_size)],
-                    outline=colors[minutiae]
-                )
-                minutiae_coords.append((i, j, minutiae))
+    # for i in range(marginxr, x- marginxl):
+    #     for j in range(marginy, y - marginy):
+    #         minutiae = minutiae_at(pixels, i, j)
+    #         if minutiae != "none":
+    #             # Optionally, you can also impose other criteria here 
+    #             # to ensure it's truly a fingerprint-related minutia
+    #             draw.ellipse(
+    #                 [(i - ellipse_size, j - ellipse_size),
+    #                  (i + ellipse_size, j + ellipse_size)],
+    #                 outline=colors[minutiae]
+    #             )
+    #             minutiae_coords.append((i, j, minutiae))
+
+    window_edge = 7
+    for i in range(1, x - 1):
+        for j in range(1, y - 1):
+            if mask[i,j] == 1:
+                top = max(0, i - window_edge)
+                bottom = min(mask.shape[0], i + window_edge + 1)
+                left = max(0, j - window_edge)
+                right = min(mask.shape[1], j + window_edge + 1)
+
+                window = mask[top:bottom, left:right]
+
+                if np.any(window == 0):
+                    minutiae = "none"
+                else:
+                    minutiae = minutiae_at(pixels, i, j)
+
+                if minutiae != "none":
+                    # Optionally, you can also impose other criteria here 
+                    # to ensure it's truly a fingerprint-related minutia
+                    draw.ellipse(
+                        [(i - ellipse_size, j - ellipse_size),
+                        (i + ellipse_size, j + ellipse_size)],
+                        outline=colors[minutiae]
+                    )
+                    minutiae_coords.append((i, j, minutiae))
 
     del draw
     return result, minutiae_coords

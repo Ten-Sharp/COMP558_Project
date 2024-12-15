@@ -1,4 +1,4 @@
-function I_enhanced = fingerprint_enhancer(Im,norm_m,norm_v,blocksize,mask_threshold,ratio_range,ratio_x,ratio_y)
+function [I_enhanced,ori_map,freq_map,mask_map] = fingerprint_enhancer(Im,norm_m,norm_v,blocksize,mask_threshold,ratio_range,ratio_x,ratio_y)
 
 I_norm = normalise_im(Im,norm_m,norm_v);
 
@@ -12,7 +12,7 @@ I_orientations = plot_orientations(Im,blocksize,orientations);
 % [frequencies,med_freq,freq_map] = freq_estimation_fft(I_norm,blocksize,1/18,1/3);
 % show(freq_map,3)
 
-[R,masked_I] = mask_estimate(I_norm,blocksize,mask_threshold,ratio_range,frequencies);
+[R,masked_I,mask_map] = mask_estimate(I_norm,blocksize,mask_threshold,ratio_range,frequencies);
 masked_I = plot_masked(masked_I,I_norm,R,blocksize);
 % show(masked_I,4)
 
