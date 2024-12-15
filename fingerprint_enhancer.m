@@ -1,4 +1,4 @@
-function [I_enhanced,ori_map,freq_map,mask_map] = fingerprint_enhancer(Im,norm_m,norm_v,blocksize,mask_threshold,ratio_range,ratio_x,ratio_y)
+function [I_enhanced,I_binary,ori_map,freq_map,mask_map] = fingerprint_enhancer(Im,norm_m,norm_v,blocksize,mask_threshold,ratio_range,ratio_x,ratio_y)
 
 I_norm = normalise_im(Im,norm_m,norm_v);
 
@@ -19,12 +19,15 @@ masked_I = plot_masked(masked_I,I_norm,R,blocksize);
 
 I = im_gabor_filter(I_norm,orientations,frequencies,R,blocksize,ratio_x,ratio_y);
 % show(I,5)
+I = I(blocksize+1:end-blocksize,blocksize+1:end-blocksize);
+
+I_binary = I;
 
 I_inv = I == 0;
 I_thinned = bwmorph(I_inv, 'thin', Inf);
 I = I_thinned == 0;
 
-I = I(blocksize+1:end-blocksize,blocksize+1:end-blocksize);
+
 % show(I,6)
 I_enhanced = I;
 
