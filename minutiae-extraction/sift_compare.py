@@ -158,6 +158,23 @@ def main():
 
     print(np.unique(valid_mask))
 
+    overlay_image = np.ones((img1_bin.shape[0], img1_bin.shape[1], 3), dtype=np.uint8) * 255  # White background
+
+    # Apply red hue to areas where img1_bin has 255 (and warped_image2 has 0)
+    overlay_image[(img1_bin == 0) & (warped_image2 == 255) & (valid_mask == 1)] = [255, 0, 0]  # Red for img1_bin
+
+    # Apply blue hue to areas where warped_image2 has 255 (and img1_bin has 0)
+    overlay_image[(warped_image2 == 0) & (img1_bin == 255) & (valid_mask == 1)] = [0, 0, 255]  # Blue for warped_image2
+
+    # Apply black for overlapping areas where both images have 255
+    overlay_image[(img1_bin == 0) & (warped_image2 == 0) & (valid_mask == 1)] = [0, 0, 0]
+
+    plt.figure(figsize=(12, 6))
+    plt.title('SIFT Matches Using Minutiae as Feature Points')
+    plt.imshow(overlay_image)
+    plt.axis('off')
+    plt.show()
+
     img1_bin = img1_bin.astype(np.uint8) // 255
     warped_image2 = warped_image2.astype(np.uint8) // 255
 
