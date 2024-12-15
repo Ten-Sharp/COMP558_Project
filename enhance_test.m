@@ -12,7 +12,7 @@ function enhance_test(fileName1, fileName2)
     end
     
     for i = 1:2
-        imgPath = fullfile(filePath, fileNames{i})
+        imgPath = fullfile(filePath, fileNames{i});
         Im = imread(imgPath);
     
         dimensions = size(Im);
@@ -24,7 +24,7 @@ function enhance_test(fileName1, fileName2)
         Im_enhanced = fingerprint_enhancer(Im,128,150,16,6,0.9,0.5,0.5);
     
         [~, name, ext] = fileparts(fileNames{i});
-        newFileName = fullfile(filePath, [name, '_enhanced', ext]);
+        newFileName = fullfile(strcat(name, '_enhanced', ext));
     
         imwrite(Im_enhanced, newFileName);
     end
