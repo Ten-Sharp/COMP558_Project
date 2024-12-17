@@ -26,9 +26,9 @@ def calculate_minutiaes(im,mask):
     pixels = utils.load_image(im)
     utils.apply_to_each_pixel(pixels, lambda x: 0.0 if x > 10 else 1.0)
 
-    print('sizes in minutia')
-    print(im.size)
-    print(mask.shape)
+    # print('sizes in minutia')
+    # print(im.size)
+    # print(mask.shape)
 
     (x, y) = im.size
     result = im.convert("RGB")

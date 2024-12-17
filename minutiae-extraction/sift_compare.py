@@ -47,14 +47,14 @@ def get_minutia_type(minutia_list,kps):
 def main():
     # parser = argparse.ArgumentParser()
 
-    # parser.add_argument('-i',required=True,dest='f1',help='first fingerprint')
-    # parser.add_argument('-ii',required=True,dest='f2',help='second fingerprint')
+    # parser.add_argument('-i',required=True,dest='f1',help='first finger#print')
+    # parser.add_argument('-ii',required=True,dest='f2',help='second finger#print')
 
     # args = parser.parse_args()
 
 
-    # image_path1 = os.path.abspath('fingerprints/101_7_enhanced.tif')
-    # image_path2 = os.path.abspath('fingerprints/101_8_enhanced.tif')
+    # image_path1 = os.path.abspath('finger#prints/101_7_enhanced.tif')
+    # image_path2 = os.path.abspath('finger#prints/101_8_enhanced.tif')
     arg1 = sys.argv[1]
     arg2 = sys.argv[2]
     arg3 = sys.argv[3]
@@ -91,8 +91,8 @@ def main():
     _, minutiae_list_1 = calculate_minutiaes(pil_img1,f1_mask)
     _, minutiae_list_2 = calculate_minutiaes(pil_img2,f2_mask)
 
-    print('number of features in 1: ',len(minutiae_list_1))
-    print('number of features in 2: ',len(minutiae_list_2))
+    #print('number of features in 1: ',len(minutiae_list_1))
+    #print('number of features in 2: ',len(minutiae_list_2))
     #transpose here
     f1_freq = f1_freq.T
     f1_ori = f2_ori.T
@@ -140,7 +140,11 @@ def main():
         if m.distance < ratio_thresh * n.distance:
             good_matches.append(m)
 
-    print(f"\nNumber of good matches: {len(good_matches)}")
+    #print(f"\nNumber of good matches: {len(good_matches)}")
+
+    if len(good_matches) < 8:
+        print('NO_MATCH')
+        return
 
     points1 = np.float32([kps1[m.queryIdx].pt for m in good_matches])
     points2 = np.float32([kps2[m.trainIdx].pt for m in good_matches])
@@ -156,7 +160,7 @@ def main():
 
     valid_mask = np.logical_and(f1_mask, warped_mask2).astype(np.uint8)
 
-    print(np.unique(valid_mask))
+    #print(np.unique(valid_mask))
 
     overlay_image = np.ones((img1_bin.shape[0], img1_bin.shape[1], 3), dtype=np.uint8) * 255  # White background
 
@@ -169,6 +173,7 @@ def main():
     # Apply black for overlapping areas where both images have 255
     overlay_image[(img1_bin == 0) & (warped_image2 == 0) & (valid_mask == 1)] = [0, 0, 0]
 
+    # plt.ion()
     plt.figure(figsize=(12, 6))
     plt.title('SIFT Matches Using Minutiae as Feature Points')
     plt.imshow(overlay_image)
@@ -178,24 +183,24 @@ def main():
     img1_bin = img1_bin.astype(np.uint8) // 255
     warped_image2 = warped_image2.astype(np.uint8) // 255
 
-    print(np.unique(img1_bin))
-    print(np.unique(warped_image2))
+    #print(np.unique(img1_bin))
+    #print(np.unique(warped_image2))
 
     difference = np.abs(img1_bin - warped_image2)
     difference[difference == 255] = 1
-    print(np.unique(difference))
+    #print(np.unique(difference))
 
     difference_valid = difference * (valid_mask)
 
-    print(np.sum(valid_mask))
-    print(np.sum(difference_valid))
+    #print(np.sum(valid_mask))
+    #print(np.sum(difference_valid))
 
     total_diff = 1 - (np.sum(difference_valid) / np.sum((valid_mask)))
-    print(total_diff)
+    #print(total_diff)
     if total_diff >= 0.6:
-        print('\nFINGERPRINT MATCH')
+        print(f'MATCH,{total_diff}')
     else:
-        print('\nNO MATCH')
+        print(f'NO_MATCH,{total_diff}')
 
     NUM_TO_DRAW = min(len(good_matches), 100)
     matches_to_draw = good_matches[:NUM_TO_DRAW]

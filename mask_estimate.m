@@ -41,7 +41,5 @@ for i = 1:size(recoverable_region,1)
     end
 end
 
-disp(size(mask_map))
-
 end
 

@@ -37,17 +37,27 @@ def main():
         #     check=True
         # )
 
-        subprocess.run(
+        result = subprocess.run(
             [sys.executable, python_script, enhanced_1, enhanced_2,binary_1,binary_2], 
-            check=True
+            check=True,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE
         )
 
-    except subprocess.CalledProcessError as e:
-        print(f"An error occurred: {e}")
+        end_time = time.time()
+        total_time = end_time - start_time
+        # print('Total run time: ',total_time)
 
-    end_time = time.time()
-    total_time = end_time - start_time
-    print('Total run time: ',total_time)
+        output = result.stdout.decode()
+
+        print(f'{output},{total_time}')
+
+    except subprocess.CalledProcessError as e:
+        # print(f"An error occurred: {e}")
+        print('ERROR')
+        return
+
+    
 
 if __name__ == "__main__":
     main()
